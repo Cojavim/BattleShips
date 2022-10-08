@@ -1,3 +1,5 @@
+using System.Net;
+using Battleships.Ship;
 namespace Battleships;
 
 // Imagine a game of battleships.
@@ -14,6 +16,46 @@ public class Game
     // returns: the number of ships sunk by the set of guesses
     public static int Play(string[] ships, string[] guesses)
     {
-        return 0;
+        var shipList = CreateShips(ships);
+        
+        Fire(shipList, guesses);
+
+        return ShipsSunk(shipList);
+    }
+
+    private static IEnumerable<Ship.Ship> CreateShips(string[] shipDefinitions)
+    {
+        var shipList = new List<Ship.Ship>();
+        foreach (var shipDefinition in shipDefinitions)
+        {
+            var newShip = new Ship.Ship(shipDefinition);
+#warning shipOverlapCheck
+            shipList.Add(newShip);
+        }
+
+        return shipList;
+    }
+
+    private static void Fire(IEnumerable<Ship.Ship> ships, string[] guesses)
+    {
+        foreach (var guess in guesses)
+        {
+            foreach (var ship in ships)
+            {
+                ship.IsHit(guess);
+            }
+        }
+    }
+
+    private static int ShipsSunk(IEnumerable<Ship.Ship> ships)
+    {
+        int sunkCount = 0;
+        foreach (var ship in ships)
+        {
+            if (ship.IsSunk())
+                sunkCount++;
+        }
+
+        return sunkCount;
     }
 }
